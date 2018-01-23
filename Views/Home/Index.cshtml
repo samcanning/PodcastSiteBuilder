@@ -1,0 +1,17 @@
+﻿@model List<PodcastSiteBuilder.Models.RssData>
+@{
+    ViewData["Title"] = "Home Page";
+}
+<h1>@ViewBag.PodcastTitle</h1>
+@foreach(var x in Model)
+{
+    <hr/>
+    // <p><a href=@x.Link>@x.Title</a> (@Html.Raw(x.PubDate))</p>
+    <p>@x.Title (@Html.Raw(x.PubDate))</p> //unsure if episode titles should link to hosting source (libsyn, blubrry, etc) - probably not, but may depend on admin preference?
+    <img src=@x.Image width="20%">
+    <p>@Html.Raw(x.Description)</p>
+    <audio controls>
+        <source src=@x.Audio type=@x.AudioType>
+    Your browser does not support the audio element.
+    </audio>
+}

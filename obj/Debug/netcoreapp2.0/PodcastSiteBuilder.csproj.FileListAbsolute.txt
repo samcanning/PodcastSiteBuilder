@@ -1,0 +1,10 @@
+C:\Users\samca\Desktop\coding\C#\PodcastSiteBuilder\bin\Debug\netcoreapp2.0\PodcastSiteBuilder.deps.json
+C:\Users\samca\Desktop\coding\C#\PodcastSiteBuilder\bin\Debug\netcoreapp2.0\PodcastSiteBuilder.runtimeconfig.json
+C:\Users\samca\Desktop\coding\C#\PodcastSiteBuilder\bin\Debug\netcoreapp2.0\PodcastSiteBuilder.runtimeconfig.dev.json
+C:\Users\samca\Desktop\coding\C#\PodcastSiteBuilder\bin\Debug\netcoreapp2.0\PodcastSiteBuilder.dll
+C:\Users\samca\Desktop\coding\C#\PodcastSiteBuilder\bin\Debug\netcoreapp2.0\PodcastSiteBuilder.pdb
+C:\Users\samca\Desktop\coding\C#\PodcastSiteBuilder\obj\Debug\netcoreapp2.0\PodcastSiteBuilder.csproj.CoreCompileInputs.cache
+C:\Users\samca\Desktop\coding\C#\PodcastSiteBuilder\obj\Debug\netcoreapp2.0\PodcastSiteBuilder.AssemblyInfoInputs.cache
+C:\Users\samca\Desktop\coding\C#\PodcastSiteBuilder\obj\Debug\netcoreapp2.0\PodcastSiteBuilder.AssemblyInfo.cs
+C:\Users\samca\Desktop\coding\C#\PodcastSiteBuilder\obj\Debug\netcoreapp2.0\PodcastSiteBuilder.dll
+C:\Users\samca\Desktop\coding\C#\PodcastSiteBuilder\obj\Debug\netcoreapp2.0\PodcastSiteBuilder.pdb

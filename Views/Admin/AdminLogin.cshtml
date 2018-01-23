@@ -1,0 +1,10 @@
+@model PodcastSiteBuilder.Models.AdminLogin
+@{
+    ViewData["Title"] = "Admin Login";
+}
+<h2>Login</h2>
+<form asp-controller="Admin" asp-action="Login" method="POST">
+    Username: <input asp-for="Username"> <span asp-validation-for="Username"></span><br><br>
+    Password: <input asp-for="Password"> <span asp-validation-for="Password"></span><br><br>
+    <input type='submit'>
+</form>
