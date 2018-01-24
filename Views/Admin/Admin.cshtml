@@ -1,1 +1,13 @@
-admin works
+@{
+    ViewData["Title"] = "Admin";
+}
+<h2>Welcome!</h2>
+<h4>Admin actions:</h4>
+<p>Edit RSS feeds</p>
+<p>Edit hosts</p>
+<p>Edit links</p>
+<p>Change password</p>
+@if(ViewBag.Head == true)
+{
+    <p>Add or remove admins</p>
+}
