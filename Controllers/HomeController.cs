@@ -41,23 +41,34 @@ namespace PodcastSiteBuilder.Controllers
             List<RssData> rssFeedData = new List<RssData>();
             for(int i = start; i < count + start; i++)
             {
+                RssData episode = new RssData();
                 try
                 {
-                    RssData episode = new RssData
+                    episode.Title = nodes[i].SelectSingleNode("title").InnerText;
+                    episode.Image = nodes[i].SelectSingleNode("./*[name()='itunes:image']/@href").InnerText;
+                    episode.Link = nodes[i].SelectSingleNode("link").InnerText; //may decide later to remove the Link property
+                    episode.PubDate = nodes[i].SelectSingleNode("pubDate").InnerText.Substring(5, 11);
+                    //may decide later to reformat publish date string
+                    //currently just truncates from "Day, DD MMM YYYY HH:mm:SS +TTTT" to "DD MM YYYY"
+                    episode.Audio = nodes[i].SelectSingleNode("enclosure/@url").InnerText;
+                    episode.AudioType = nodes[i].SelectSingleNode("enclosure/@type").InnerText;
+                    try
                     {
-                        Title = nodes[i].SelectSingleNode("title").InnerText,
-                        Description = nodes[i].SelectSingleNode("./*[name()='itunes:summary']").InnerText,
-                        Image = nodes[i].SelectSingleNode("./*[name()='itunes:image']/@href").InnerText,
-                        Link = nodes[i].SelectSingleNode("link").InnerText, //may decide later to remove the Link property
-                        PubDate = nodes[i].SelectSingleNode("pubDate").InnerText.Substring(5, 11),
-                        //may decide later to reformat publish date string
-                        //currently just truncates from "Day, DD MMM YYYY HH:mm:SS +TTTT" to "DD MM YYYY"
-                        Audio = nodes[i].SelectSingleNode("enclosure/@url").InnerText,
-                        AudioType = nodes[i].SelectSingleNode("enclosure/@type").InnerText
-                    };
-                    rssFeedData.Add(episode);
+                        episode.Description = nodes[i].SelectSingleNode("./*[name()='itunes:summary']").InnerText;
+                    }
+                    catch
+                    {
+                        try
+                        {
+                            episode.Description = nodes[i].SelectSingleNode("description").InnerText;
+                        }
+                        catch
+                        { }
+                    }
+                    
                 }
                 catch { } //no handling yet for any RSS feed entries without all of these attributes - would this ever happen for an actual episode? (as opposed to non-episode posts, which do appear in the feed)
+                rssFeedData.Add(episode);
             }
             return rssFeedData;
         }
