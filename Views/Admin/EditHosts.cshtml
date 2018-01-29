@@ -1,0 +1,9 @@
+@model List<PodcastSiteBuilder.Models.Host>
+@{
+    ViewData["Title"] = "Edit hosts";
+}
+<h2>Edit hosts</h2>
+@foreach(var x in Model)
+{
+    <p><a href='/admin/hosts/@x.id'>@x.name</a></p>
+}

@@ -6,4 +6,5 @@
 <p>Curent RSS feed: <a href='@ViewBag.Feed'>@ViewBag.Feed</a></p>
 <form asp-action="SetRSS" asp-controller="Admin" method="POST">
     <input asp-for="url"> <input type='submit'> <span asp-validation-for="url"></span>
-</form>
+</form><br>
+<a href='/admin/main'>Back</a>

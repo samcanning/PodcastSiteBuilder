@@ -1,0 +1,18 @@
+@model List<PodcastSiteBuilder.Models.HostDisplay>
+@{
+    ViewData["Title"] = "Hosts";
+}
+<h2>Hosts</h2>
+@foreach(var x in Model)
+{
+    <h3>@x.name</h3>
+    @if(x.image != null)
+    {
+        <p>image exists</p>
+    }
+    <p>@x.bio</p>
+    @foreach(var l in x.links)
+    {
+        <p><a href=@l.url>@l.site</a></p>
+    }
+}

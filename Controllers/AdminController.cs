@@ -41,6 +41,7 @@ namespace PodcastSiteBuilder.Controllers
         [Route("admin")]
         public IActionResult AdminLogin()
         {
+            if(!NotLogged()) return RedirectToAction("Admin");
             return View();
         }
 
@@ -177,6 +178,31 @@ namespace PodcastSiteBuilder.Controllers
             }
             catch { return false; }
             return true;     
+        }
+
+        [Route("admin/hosts")]
+        public IActionResult EditHosts()
+        {
+            if(NotLogged()) return RedirectToAction("AdminLogin");
+            List<Host> hosts = _context.Hosts.ToList();
+            return View(hosts);
+        }
+
+        [Route("admin/hosts/{id}")]
+        public IActionResult Host(int id)
+        {
+            if(NotLogged()) return RedirectToAction("AdminLogin");
+            Host thisHost = _context.Hosts.SingleOrDefault(h => h.id == id);
+            if(thisHost == null) return RedirectToAction("EditHosts");
+            HostDisplay display = new HostDisplay()
+            {
+                id = id,
+                name = thisHost.name,
+                bio = thisHost.bio,
+                image = thisHost.image,
+                links = _context.Links.Where(l => l.host_id == thisHost.id).ToList()
+            };
+            return View(display);
         }
 
         public bool NotLogged()

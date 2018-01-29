@@ -75,6 +75,24 @@ namespace PodcastSiteBuilder.Controllers
             return rssFeedData;
         }
 
+        [Route("hosts")]
+        public IActionResult Hosts()
+        {
+            List<HostDisplay> HostDisplays = new List<HostDisplay>();
+            foreach(Host h in _context.Hosts)
+            {
+                HostDisplay newHost = new HostDisplay()
+                {
+                    name = h.name,
+                    image = h.image,
+                    bio = h.bio,
+                    links = _context.Links.Where(l => l.host_id == h.id).ToList()
+                };
+                HostDisplays.Add(newHost);
+            }
+            return View(HostDisplays);
+        }
+
         /* pulls title from RSS feed - probably no longer needed now that DB contains title
         public string GetTitle()
         {

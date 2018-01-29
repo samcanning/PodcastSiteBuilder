@@ -1,0 +1,22 @@
+@model PodcastSiteBuilder.Models.HostDisplay
+@{
+    ViewData["Title"] = "Edit host - " + @Model.name;
+}
+<h2>Edit Host</h2>
+<h4>Name</h4>
+<p>@Model.name</p>
+<form asp-action="EditName" asp-controller="Host" method="POST">
+    <input type='text' name="name"> <input type='submit' value='Edit name'> <input hidden name='id' value='@Model.id'>
+</form><br>
+<h4>Bio</h4>
+<p>@Model.bio</p>
+<form asp-action="EditBio" asp-controller="Host" method="POST">
+    <input type='text' name="bio"> <input type='submit' value='Edit bio'> <input hidden name='id' value='@Model.id'>
+</form><br>
+<h4>Links:</h4>
+@foreach(var x in Model.links)
+{
+    <p>@x.site - <a href=@x.url>@x.url</a> (<a href='@Model.id/editlink/@x.id'>Edit</a> | <a href='@Model.id/removelink/@x.id'>Remove</a>)</p>
+}
+<p><a href='@Model.id/addlink'>Add link</a></p> <!-- link currently not functional! -->
+<p><a href='/admin/hosts'>Back</a></p>
