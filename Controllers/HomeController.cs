@@ -65,10 +65,12 @@ namespace PodcastSiteBuilder.Controllers
                         catch
                         { }
                     }
+
+                rssFeedData.Add(episode);
                     
                 }
                 catch { } //no handling yet for any RSS feed entries without all of these attributes - would this ever happen for an actual episode? (as opposed to non-episode posts, which do appear in the feed)
-                rssFeedData.Add(episode);
+                
             }
             return rssFeedData;
         }

@@ -1,0 +1,9 @@
+@model PodcastSiteBuilder.Models.NewFeed
+@{
+    ViewData["Title"] = "Update RSS Feed";
+}
+<h2>Change RSS feed</h2>
+<p>Curent RSS feed: <a href='@ViewBag.Feed'>@ViewBag.Feed</a></p>
+<form asp-action="SetRSS" asp-controller="Admin" method="POST">
+    <input asp-for="url"> <input type='submit'> <span asp-validation-for="url"></span>
+</form>
