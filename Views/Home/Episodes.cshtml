@@ -1,0 +1,180 @@
+@model List<PodcastSiteBuilder.Models.RssData>
+@{
+    ViewData["Title"] = "Episodes";
+}
+<br>
+@foreach(var x in Model)
+{
+    <div class="episodeBox">
+        <p><span class="episodeTitle">@x.Title</span> (@Html.Raw(x.PubDate))</p>
+        <img class="episodeArt" src=@x.Image width="20%">
+        <div class="description">@Html.Raw(x.Description)</div>
+        <audio controls>
+            <source src=@x.Audio type=@x.AudioType>
+        Your browser does not support the audio element.
+        </audio>
+        <hr/>
+    </div>
+}
+@if(ViewBag.page == 1)
+{
+    if(ViewBag.totalPages == 1)
+    {
+        <span><b>1</b></span>
+    }
+    else if(ViewBag.totalPages > 9)
+    {
+        <span><b>1</b></span>
+        for(int i = 2; i < 10; i++)
+        {
+            <span><a href="/episodes?page=@i">@i</a></span>
+        }
+        <span>...</span>
+        <span><a href="/episodes?page=2">Next &rsaquo;</a></span>
+        <span><a href="/episodes?page=@ViewBag.totalPages">Last &raquo;</a></span>
+    }
+    else
+    {
+        for(int i = 1; i <= ViewBag.totalPages; i++)
+        {
+            if(i == ViewBag.page)
+            {
+                <b>@i</b>
+            }
+            else
+            {
+                <span><a href="/episodes?page=@i">@i</a></span>
+            }        
+        }
+        <span><a href="/episodes?page=2">Next &rsaquo;</a></span>
+        <span><a href="/episodes?page=@ViewBag.totalPages">Last &raquo;</a></span>
+    }
+}
+@if(ViewBag.page != 1)
+{
+    int prev = ViewBag.page - 1;
+    int next = ViewBag.page + 1;
+    if(ViewBag.totalPages > 9)
+    {
+        int fromStart = ViewBag.page - 1;
+        int fromEnd = (int)ViewBag.totalPages - ViewBag.page;
+        if(fromStart > 3 && fromEnd > 3)
+        {
+            <span><a href="/episodes">&laquo; First</a></span>
+            <span><a href="/episodes?page=@prev">&lsaquo; Prev</a></span>
+            @if(fromStart != 4)
+            {
+                <span>...</span>
+            }
+            @for(int i = ViewBag.page - 4; i <= ViewBag.page + 4; i++)
+            {
+                if(i == ViewBag.page)
+                {
+                    <b>@i</b>
+                }
+                else
+                {
+                    <span><a href="/episodes?page=@i">@i</a></span>
+                }
+            }
+            @if(fromEnd != 4)
+            {
+                <span>...</span>
+            }
+            <span><a href="/episodes?page=@next">Next &rsaquo;</a></span>
+            <span><a href="/episodes?page=@ViewBag.totalPages">Last &raquo;</a></span>
+        }
+        if(fromStart > 3 && fromEnd <= 3 && fromEnd != 0)
+        {
+            <span><a href="/episodes">&laquo; First</a></span>
+            <span><a href="/episodes?page=@prev">&lsaquo; Prev</a></span>
+            <span>...</span>
+            @for(int i = ((int)ViewBag.totalPages - 8); i <= (int)ViewBag.totalPages; i++)
+            {
+                if(i == ViewBag.page)
+                {
+                    <b>@i</b>
+                }
+                else
+                {
+                    <span><a href="/episodes?page=@i">@i</a></span>
+                }
+            }
+            <span><a href="/episodes?page=@next">Next &rsaquo;</a></span>
+            <span><a href="/episodes?page=@ViewBag.totalPages">Last &raquo;</a></span>
+        }
+        if(fromStart <= 3 && fromEnd > 3)
+        {
+            <span><a href="/episodes">&laquo; First</a></span>
+            <span><a href="/episodes?page=@prev">&lsaquo; Prev</a></span>
+            @for(int i = 1; i <= 9; i++)
+            {
+                if(i == ViewBag.page)
+                {
+                    <b>@i</b>
+                }
+                else
+                {
+                    <span><a href="/episodes?page=@i">@i</a></span>
+                }
+            }
+            <span>...</span>
+            <span><a href="/episodes?page=@next">Next &rsaquo;</a></span>
+            <span><a href="/episodes?page=@ViewBag.totalPages">Last &raquo;</a></span>
+        }
+        if(fromEnd == 0)
+        {
+            <span><a href="/episodes">&laquo; First</a></span>
+            <span><a href="/episodes?page=@prev">&lsaquo; Prev</a></span>
+            <span>...</span>
+            @for(int i = ((int)ViewBag.totalPages - 8); i <= (int)ViewBag.totalPages; i++)
+            {
+                if(i == ViewBag.page)
+                {
+                    <b>@i</b>
+                }
+                else
+                {
+                    <span><a href="/episodes?page=@i">@i</a></span>
+                }
+            }
+        }
+    }
+    else
+    {
+        if(ViewBag.page == ViewBag.totalPages - 1)
+        {
+            <span><a href="/episodes">&laquo; First</a></span>
+            <span><a href="/episodes?page=@prev">&lsaquo; Prev</a></span>
+            for(int i = 1; i <= ViewBag.totalPages; i++)
+            {
+                if(i == ViewBag.page)
+                {
+                    <b>@i</b>
+                }
+                else
+                {
+                    <span><a href="/episodes?page=@i">@i</a></span>
+                }        
+            }
+            <span><a href="/episodes?page=@next">Next &rsaquo;</a></span>
+            <span><a href="/episodes?page=@ViewBag.totalPages">Last &raquo;</a></span>
+        }
+        else
+        {
+            <span><a href="/episodes">&laquo; First</a></span>
+            <span><a href="/episodes?page=@prev">&lsaquo; Prev</a></span>
+            for(int i = 1; i <= ViewBag.totalPages; i++)
+            {
+                if(i == ViewBag.page)
+                {
+                    <b>@i</b>
+                }
+                else
+                {
+                    <span><a href="/episodes?page=@i">@i</a></span>
+                }        
+            }
+        }
+    }
+}

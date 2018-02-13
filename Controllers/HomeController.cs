@@ -93,6 +93,27 @@ namespace PodcastSiteBuilder.Controllers
             return View(HostDisplays);
         }
 
+        [Route("episodes")]
+        public IActionResult Episodes(int page = 1)
+        {
+            int offset = 10 * (page-1);
+            List<RssData> episodes = GetEpisodes(10, offset);
+            ViewBag.page = page;
+            int epCount = EpisodeCount();
+            ViewBag.totalEps = epCount;
+            ViewBag.totalPages = (int)Math.Ceiling((decimal)epCount / 10);
+            return View(episodes);
+        }
+
+        public int EpisodeCount() //gets total number of episodes
+        {
+            XmlDocument doc = new XmlDocument();
+            doc.Load(_context.Podcasts.FirstOrDefault().Feed);
+            XmlElement root = doc.DocumentElement;
+            XmlNodeList nodes = root.SelectNodes("channel/item");
+            return nodes.Count;
+        }
+
         /* pulls title from RSS feed - probably no longer needed now that DB contains title
         public string GetTitle()
         {

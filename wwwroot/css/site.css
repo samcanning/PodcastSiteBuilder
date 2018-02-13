@@ -33,3 +33,23 @@
         display: none;
     }
 }
+
+.episodeArt, .description {
+    display: inline-block;
+    vertical-align: top;
+}
+
+.episodeTitle {
+    font-size: 15pt;
+}
+
+.description
+{
+    margin-left: 10px;
+    width: 70%;
+}
+
+audio
+{
+    display: block;
+}
