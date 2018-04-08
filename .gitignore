@@ -1,2 +1,6 @@
 appsettings.json
+bin/
+.vscode/
+obj/
 plannedfeatures.txt
+Credentials.cs

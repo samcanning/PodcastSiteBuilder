@@ -1,0 +1,20 @@
+@model PodcastSiteBuilder.Models.Link
+@{
+    ViewData["Title"] = "Edit link";
+}
+<h3>Edit link for @ViewBag.name</h3>
+<p>Title: @Model.site</p>
+<form asp-action="EditLinkTitle" asp-controller="Admin" method="POST">
+    <input hidden name="hostid" value="@ViewBag.id">
+    <input hidden name="linkid" value="@Model.id">
+    <input hidden name="url" value="@Model.url">
+    <input type="text" name="site"> <input type="submit"> <span asp-validation-for="site"></span>
+</form>
+<p>URL: @Model.url</p>
+<form asp-action="EditLinkURL" asp-controller="Admin" method="POST">
+    <input hidden name="hostid" value="@ViewBag.id">
+    <input hidden name="linkid" value="@Model.id">
+    <input hidden name="site" value="@Model.site">
+    <input type="text" name="url"> <input type="submit"> <span asp-validation-for="url"></span>
+</form>
+<p><a href="/admin/hosts/@ViewBag.id">Back</a></p>

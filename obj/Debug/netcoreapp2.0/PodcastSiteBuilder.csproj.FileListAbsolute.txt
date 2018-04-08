@@ -8,3 +8,4 @@ C:\Users\samca\Desktop\coding\C#\PodcastSiteBuilder\obj\Debug\netcoreapp2.0\Podc
 C:\Users\samca\Desktop\coding\C#\PodcastSiteBuilder\obj\Debug\netcoreapp2.0\PodcastSiteBuilder.AssemblyInfo.cs
 C:\Users\samca\Desktop\coding\C#\PodcastSiteBuilder\obj\Debug\netcoreapp2.0\PodcastSiteBuilder.dll
 C:\Users\samca\Desktop\coding\C#\PodcastSiteBuilder\obj\Debug\netcoreapp2.0\PodcastSiteBuilder.pdb
+C:\Users\samca\Desktop\coding\C#\PodcastSiteBuilder\obj\Debug\netcoreapp2.0\PodcastSiteBuilder.csprojResolveAssemblyReference.cache

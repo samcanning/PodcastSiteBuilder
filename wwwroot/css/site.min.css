@@ -19,3 +19,9 @@ audio
 {
     display: block;
 }
+
+.hostPanel
+{
+    display: inline-block;
+    margin: 0px 15px;
+}

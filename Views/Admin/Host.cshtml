@@ -13,10 +13,22 @@
 <form asp-action="EditBio" asp-controller="Host" method="POST">
     <input type='text' name="bio"> <input type='submit' value='Edit bio'> <input hidden name='id' value='@Model.id'>
 </form><br>
-<h4>Links:</h4>
+<h4>Links</h4>
 @foreach(var x in Model.links)
 {
     <p>@x.site - <a href=@x.url>@x.url</a> (<a href='@Model.id/editlink/@x.id'>Edit</a> | <a href='@Model.id/removelink/@x.id'>Remove</a>)</p>
 }
-<p><a href='@Model.id/addlink'>Add link</a></p> <!-- link currently not functional! -->
-<p><a href='/admin/hosts'>Back</a></p>
+<p><a href='@Model.id/addlink'>Add link</a></p>
+<h4>Image</h4>
+@if(Model.image != null)
+{
+    string img = "https://s3-us-west-2.amazonaws.com/dhcimages/" + @Model.image; 
+    <img src="@img" width="250"><br><br>
+}
+<p><a href="@Model.id/removeimage">Remove image</a></p>
+<form asp-action="AddImage" asp-controller="Admin" enctype="multipart/form-data" method="POST">
+    <input hidden name="id" value="@Model.id">
+    <input type="file" name="file"><br>
+    <input type='submit' value="Upload">
+</form>
+<p><a href='/admin/hosts/edit'>Back</a></p>

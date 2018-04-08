@@ -2,12 +2,15 @@
     ViewData["Title"] = "Admin";
 }
 <h2>Welcome!</h2>
-<h4>Admin actions:</h4>
-<p><a href='/admin/rss'>Edit RSS feeds</a></p>
-<p><a href='/admin/hosts'>Edit hosts</a></p>
+<h3>Admin actions:</h3>
+<h4>RSS</h4>
+<p><a href='rss'>Edit RSS feeds</a></p>
+<h4>Hosts</h4>
+<p><a href='hosts/edit'>Edit hosts</a></p>
+<p><a href="hosts/add">Add host</a></p>
+<p><a href="hosts/delete">Delete host</a></p>
 <p>Edit links</p>
-<p>Change password</p>
-@if(ViewBag.Head == true)
-{
-    <p>Add or remove admins</p>
-}
+<h4>Admin</h4>
+<p>Add admin</p>
+<p>Delete admin</p>
+<p>Change your password</p>

@@ -12,6 +12,8 @@ using System.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Amazon.S3.Transfer;
+using System.IO;
 
 namespace PodcastSiteBuilder.Controllers
 {
@@ -33,7 +35,6 @@ namespace PodcastSiteBuilder.Controllers
             {
                 return RedirectToAction("AdminRegistration");
             }
-            if(NotHead()) ViewBag.Head = false;
             else ViewBag.Head = true;
             return View();
         }
@@ -41,6 +42,10 @@ namespace PodcastSiteBuilder.Controllers
         [Route("admin")]
         public IActionResult AdminLogin()
         {
+            if(_context.Admins.FirstOrDefault() == null)
+            {
+                return View("AdminRegistration");
+            }
             if(!NotLogged()) return RedirectToAction("Admin");
             return View();
         }
@@ -73,7 +78,7 @@ namespace PodcastSiteBuilder.Controllers
         [Route("admin/register")]
         public IActionResult AdminRegistration()
         {
-            if(NotLogged() || NotHead()) return RedirectToAction("AdminLogin");
+            if(_context.Admins.FirstOrDefault() != null) return RedirectToAction("AdminLogin");
             return View();
         }
 
@@ -81,7 +86,6 @@ namespace PodcastSiteBuilder.Controllers
         [Route("admin/register/error")]
         public IActionResult Register(AdminRegister model)
         {
-            if(NotLogged() || NotHead()) return RedirectToAction("AdminLogin");
             if(ModelState.IsValid)
             {
                 if(model.Username == "default")
@@ -115,8 +119,10 @@ namespace PodcastSiteBuilder.Controllers
         [Route("admin/rss")]
         public IActionResult EditRSS()
         {
-            if(NotLogged() || NotHead()) return RedirectToAction("AdminLogin");
-            ViewBag.Feed = _context.Podcasts.FirstOrDefault().Feed;
+            if(NotLogged()) return RedirectToAction("AdminLogin");
+            Podcast podcast = _context.Podcasts.FirstOrDefault();
+            if(podcast != null) ViewBag.Feed = podcast.Feed;
+            else ViewBag.Feed = null;
             return View();
         }
 
@@ -132,12 +138,19 @@ namespace PodcastSiteBuilder.Controllers
                 return View("EditRSS");
             }
             Podcast podcast = _context.Podcasts.FirstOrDefault();
+            bool updating = true;
+            if(podcast == null)
+            {
+                podcast = new Podcast();
+                updating = false;
+            }
             podcast.Feed = model.url;
             XmlDocument doc = new XmlDocument();
             doc.Load(model.url);
             XmlElement root = doc.DocumentElement;
             podcast.Title = root.SelectSingleNode("channel/title").InnerText;
-            _context.Update(podcast);
+            if(updating) _context.Update(podcast);
+            else _context.Add(podcast);
             _context.SaveChanges();
             return RedirectToAction("EditRSS");
         }
@@ -180,12 +193,46 @@ namespace PodcastSiteBuilder.Controllers
             return true;     
         }
 
-        [Route("admin/hosts")]
+        [Route("admin/hosts/edit")]
         public IActionResult EditHosts()
         {
             if(NotLogged()) return RedirectToAction("AdminLogin");
             List<Host> hosts = _context.Hosts.ToList();
             return View(hosts);
+        }
+
+        [Route("admin/hosts/add")]
+        public IActionResult AddHost()
+        {
+            if(NotLogged()) return RedirectToAction("AdminLogin");
+            return View();
+        }
+
+        [HttpPost]
+        [Route("admin/hosts/add/submit")]
+        public IActionResult CreateHost(Host model, IFormFile file)
+        {
+            if(model.name == null)
+            {
+                ModelState.AddModelError("name", "No name entered.");
+                return View("AddHost");
+            }
+            Host newHost = new Host(){name = model.name};
+            if(model.bio != null) newHost.bio = model.bio;
+            if(file != null)
+            {
+                TransferUtility transfer = new TransferUtility(Credentials.AccessKey, Credentials.SecretKey, Amazon.RegionEndpoint.USWest2);
+                using(var stream = new MemoryStream())
+                {
+                    string key = null;
+                    while(_context.Hosts.FirstOrDefault(h => h.image == key) != null) key = GenerateKey();
+                    file.CopyTo(stream);
+                    transfer.Upload(stream, "dhcimages", key);
+                }
+            }
+            _context.Add(newHost);
+            _context.SaveChanges();        
+            return RedirectToAction("Admin");
         }
 
         [Route("admin/hosts/{id}")]
@@ -204,6 +251,160 @@ namespace PodcastSiteBuilder.Controllers
             };
             return View(display);
         }
+        
+        [Route("admin/hosts/{id}/removeimage")]
+        public IActionResult RemoveImage(int id)
+        {
+            if(NotLogged()) return RedirectToAction("AdminLogin");
+            Host thisHost = _context.Hosts.SingleOrDefault(h => h.id == id);
+            if(thisHost == null) return RedirectToAction("Admin");
+            thisHost.image = null;
+            _context.Update(thisHost);
+            _context.SaveChanges();
+            return RedirectToAction("Host", new {id = id});
+        }
+
+        [HttpPost]
+        public IActionResult AddImage(int id, IFormFile file)
+        {
+            TransferUtility transfer = new TransferUtility(Credentials.AccessKey, Credentials.SecretKey, Amazon.RegionEndpoint.USWest2);
+            Host thisHost = _context.Hosts.SingleOrDefault(h => h.id == id);
+            using(var stream = new MemoryStream())
+            {
+                string key = null;
+                while(_context.Hosts.FirstOrDefault(h => h.image == key) != null) key = GenerateKey();
+                file.CopyTo(stream);
+                transfer.Upload(stream, "dhcimages", key);
+                thisHost.image = key;
+            }
+            _context.Update(thisHost);
+            _context.SaveChanges();
+            return RedirectToAction("Host", new {id = id});
+        }
+
+        [Route("admin/hosts/delete")]
+        public IActionResult DeleteHost()
+        {
+            return View(_context.Hosts.ToList());
+        }
+
+        [Route("admin/hosts/delete/{id}")]
+        public IActionResult SubmitDeleteHost(int id)
+        {
+            if(NotLogged()) return RedirectToAction("AdminLogin");
+            Host toDelete = _context.Hosts.SingleOrDefault(h => h.id == id);
+            if(toDelete == null) return RedirectToAction("DeleteHost");
+            List<Link> hostLinks = _context.Links.Where(l => l.host_id == id).ToList();
+            foreach(Link l in hostLinks)
+            {
+                _context.Remove(l);
+            }
+            _context.SaveChanges();
+            _context.Remove(toDelete);
+            _context.SaveChanges();
+            return RedirectToAction("Admin");
+        }
+
+        [Route("admin/hosts/{id}/addlink")]
+        public IActionResult AddLink(int id)
+        {
+            if(NotLogged()) return RedirectToAction("AdminLogin");
+            Host thisHost = _context.Hosts.SingleOrDefault(h => h.id == id);
+            if(thisHost == null) return RedirectToAction("EditHosts");
+            ViewBag.id = id;
+            ViewBag.name = thisHost.name;
+            return View();
+        }
+
+        [HttpPost]
+        [Route("admin/hosts/{id}/addlink/submit")]
+        public IActionResult CreateLink(int id, string url, string site)
+        {
+            if(NotLogged()) return RedirectToAction("AdminLogin");
+            Host thisHost = _context.Hosts.SingleOrDefault(h => h.id == id);
+            if(thisHost == null) return RedirectToAction("EditHosts");
+            ViewBag.name = thisHost.name;
+            ViewBag.id = id;
+            if(url == null) ModelState.AddModelError("url", "Must enter a URL.");
+            if(site == null) ModelState.AddModelError("site", "Must enter a title for your link.");
+            if(!ModelState.IsValid) return View("AddLink");
+            Link newLink = new Link(){
+                url = url,
+                site = site,
+                host_id = id
+            };
+            _context.Add(newLink);
+            _context.SaveChanges();
+            return RedirectToAction("Host", new {id = id});
+        }
+
+        [Route("admin/hosts/{hostid}/editlink/{linkid}")]
+        public IActionResult EditLink(int hostid, int linkid)
+        {
+            if(NotLogged()) return RedirectToAction("AdminLogin");
+            Host thisHost = _context.Hosts.SingleOrDefault(h => h.id == hostid);
+            Link thisLink = _context.Links.SingleOrDefault(l => l.id == linkid);
+            if(thisLink == null || thisHost == null) return RedirectToAction("EditHosts");
+            ViewBag.name = thisHost.name;
+            ViewBag.id = hostid;
+            return View(thisLink);
+        }
+
+        [HttpPost]
+        [Route("admin/hosts/{hostid}/editlink/{linkid}/submit_url")]
+        public IActionResult EditLinkURL(Link model, int hostid, int linkid, string site)
+        {
+            if(NotLogged()) return RedirectToAction("AdminLogin");
+            Host thisHost = _context.Hosts.SingleOrDefault(h => h.id == hostid);
+            Link thisLink = _context.Links.SingleOrDefault(l => l.id == linkid);
+            if(thisLink == null || thisHost == null) return RedirectToAction("EditHosts");
+            ViewBag.id = hostid;
+            ViewBag.name = thisHost.name;
+            if(model.url == null)
+            {
+                ModelState.AddModelError("url", "URL cannot be empty.");
+                thisLink.site = site;
+                return View("EditLink", thisLink);
+            }
+            thisLink.url = model.url;
+            _context.Update(thisLink);
+            _context.SaveChanges();
+            return RedirectToAction("Host", new {id = hostid});
+        }
+
+        [HttpPost]
+        [Route("admin/hosts/{hostid}/editlink/{linkid}/submit_title")]
+        public IActionResult EditLinkTitle(Link model, int hostid, int linkid, string url)
+        {
+            if(NotLogged()) return RedirectToAction("AdminLogin");
+            Host thisHost = _context.Hosts.SingleOrDefault(h => h.id == hostid);
+            Link thisLink = _context.Links.SingleOrDefault(l => l.id == linkid);
+            if(thisLink == null || thisHost == null) return RedirectToAction("EditHosts");
+            ViewBag.id = hostid;
+            ViewBag.name = thisHost.name;
+            if(model.site == null)
+            {
+                ModelState.AddModelError("site", "Title cannot be empty.");
+                thisLink.url = url;
+                return View("EditLink", thisLink);
+            }
+            thisLink.site = model.site;
+            _context.Update(thisLink);
+            _context.SaveChanges();
+            return RedirectToAction("Host", new {id = hostid});
+        }
+
+        // [Route("admin/hosts/{hostid}/removelink/{linkid}")]
+        // public IActionResult RemoveLink(int hostid, int linkid)
+        // {
+        //     if(NotLogged()) return RedirectToAction("AdminLogin");
+        //     Host thisHost = _context.Hosts.SingleOrDefault(h => h.id == hostid);
+        //     Link thisLink = _context.Links.SingleOrDefault(l => l.id == linkid);
+        //     if(thisLink == null || thisHost == null) return RedirectToAction("EditHosts");
+        //     _context.Remove(thisLink);
+        //     _context.SaveChanges();
+        //     return RedirectToAction("Host", new {id = hostid});
+        // }
 
         public bool NotLogged()
         {
@@ -211,10 +412,16 @@ namespace PodcastSiteBuilder.Controllers
             return true;
         }
 
-        public bool NotHead()
+        public string GenerateKey()
         {
-            if(_context.Admins.SingleOrDefault(a => a.Username == HttpContext.Session.GetString("user")).Head == 1) return false;
-            return true;
+            Random random = new Random();
+            string chars = "qwertyuiopasdfghjklzxcvbnm1234567890";
+            string key = "";
+            for(int i = 0; i < 16; i++)
+            {
+                key += chars[random.Next(chars.Length)];
+            }
+            return key;
         }
 
     }

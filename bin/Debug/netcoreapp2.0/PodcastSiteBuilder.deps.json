@@ -1,7 +1,7 @@
 {
   "runtimeTarget": {
     "name": ".NETCoreApp,Version=v2.0",
-    "signature": "e6853388bfec3572ac28c92a8512d32e0f0eabdb"
+    "signature": "f52e75336c298eadaa4d19efa756a4ad4940bd46"
   },
   "compilationOptions": {
     "defines": [
@@ -25,6 +25,8 @@
         "dependencies": {
           "Microsoft.AspNetCore.All": "2.0.5",
           "Microsoft.NETCore.App": "2.0.0",
+          "Amazon.S3": "4.0.0",
+          "AWSSDK.S3": "3.3.18",
           "Microsoft.EntityFrameworkCore": "2.0.1",
           "Microsoft.EntityFrameworkCore.SqlServer": "2.0.1",
           "MySql.Data": "6.10.5",
@@ -35,6 +37,104 @@
         },
         "compile": {
           "PodcastSiteBuilder.dll": {}
+        }
+      },
+      "Amazon.Core/0.3.2": {
+        "dependencies": {
+          "Carbon.Json": "1.0.0",
+          "System.Linq": "4.3.0",
+          "System.Net.Http": "4.3.0",
+          "System.Runtime": "4.3.0",
+          "System.Runtime.Serialization.Primitives": "4.3.0",
+          "System.Security.Cryptography.Algorithms": "4.3.0",
+          "System.Text.Encodings.Web": "4.4.0"
+        },
+        "runtime": {
+          "lib/netstandard1.6/Amazon.Core.dll": {}
+        },
+        "compile": {
+          "lib/netstandard1.6/Amazon.Core.dll": {}
+        }
+      },
+      "Amazon.S3/4.0.0": {
+        "dependencies": {
+          "Amazon.Core": "0.3.2",
+          "Carbon.Storage": "1.0.0",
+          "System.Collections": "4.3.0",
+          "System.Net.Http": "4.3.0",
+          "System.Runtime": "4.3.0",
+          "System.Security.Cryptography.Algorithms": "4.3.0",
+          "System.Xml.XDocument": "4.3.0",
+          "System.Xml.XmlSerializer": "4.0.11"
+        },
+        "runtime": {
+          "lib/netstandard1.6/Amazon.S3.dll": {}
+        },
+        "compile": {
+          "lib/netstandard1.6/Amazon.S3.dll": {}
+        }
+      },
+      "AWSSDK.Core/3.3.21.19": {
+        "dependencies": {
+          "Microsoft.CSharp": "4.4.0",
+          "System.Net.Requests": "4.0.11",
+          "System.Reflection.TypeExtensions": "4.3.0",
+          "System.Security.Cryptography.Csp": "4.3.0",
+          "System.Threading.Thread": "4.3.0"
+        },
+        "runtime": {
+          "lib/netstandard1.3/AWSSDK.Core.dll": {}
+        },
+        "compile": {
+          "lib/netstandard1.3/AWSSDK.Core.dll": {}
+        }
+      },
+      "AWSSDK.S3/3.3.18": {
+        "dependencies": {
+          "AWSSDK.Core": "3.3.21.19"
+        },
+        "runtime": {
+          "lib/netstandard1.3/AWSSDK.S3.dll": {}
+        },
+        "compile": {
+          "lib/netstandard1.3/AWSSDK.S3.dll": {}
+        }
+      },
+      "Carbon.Json/1.0.0": {
+        "dependencies": {
+          "System.Collections": "4.3.0",
+          "System.Collections.Concurrent": "4.3.0",
+          "System.ComponentModel.Annotations": "4.4.0",
+          "System.Linq": "4.3.0",
+          "System.Linq.Expressions": "4.3.0",
+          "System.Reflection": "4.3.0",
+          "System.Reflection.Extensions": "4.3.0",
+          "System.Runtime": "4.3.0",
+          "System.Runtime.Extensions": "4.3.0",
+          "System.Runtime.Serialization.Primitives": "4.3.0",
+          "System.Text.Encodings.Web": "4.4.0"
+        },
+        "runtime": {
+          "lib/netstandard1.6/Carbon.Json.dll": {}
+        },
+        "compile": {
+          "lib/netstandard1.6/Carbon.Json.dll": {}
+        }
+      },
+      "Carbon.Storage/1.0.0": {
+        "dependencies": {
+          "System.Collections": "4.3.0",
+          "System.IO": "4.3.0",
+          "System.IO.FileSystem": "4.3.0",
+          "System.Runtime": "4.3.0",
+          "System.Runtime.Extensions": "4.3.0",
+          "System.Security.Cryptography.Algorithms": "4.3.0"
+        },
+        "runtime": {
+          "lib/netstandard1.6/Carbon.Storage.dll": {}
+        },
+        "compile": {
+          "lib/netstandard1.6/Carbon.Storage.dll": {}
         }
       },
       "Libuv/1.10.0": {
@@ -3113,6 +3213,33 @@
           "System.Runtime.Handles": "4.3.0"
         }
       },
+      "System.Net.Requests/4.0.11": {
+        "dependencies": {
+          "Microsoft.NETCore.Platforms": "2.0.0",
+          "System.Collections": "4.3.0",
+          "System.Diagnostics.Debug": "4.3.0",
+          "System.Diagnostics.Tracing": "4.3.0",
+          "System.Globalization": "4.3.0",
+          "System.IO": "4.3.0",
+          "System.Net.Http": "4.3.0",
+          "System.Net.Primitives": "4.3.0",
+          "System.Net.WebHeaderCollection": "4.0.1",
+          "System.Resources.ResourceManager": "4.3.0",
+          "System.Runtime": "4.3.0",
+          "System.Threading": "4.3.0",
+          "System.Threading.Tasks": "4.3.0"
+        },
+        "runtimeTargets": {
+          "runtime/unix/lib/_._": {
+            "rid": "unix",
+            "assetType": "runtime"
+          },
+          "runtime/win/lib/_._": {
+            "rid": "win",
+            "assetType": "runtime"
+          }
+        }
+      },
       "System.Net.Security/4.3.0": {
         "dependencies": {
           "Microsoft.NETCore.Platforms": "2.0.0",
@@ -3163,6 +3290,14 @@
           "System.Net.Primitives": "4.3.0",
           "System.Runtime": "4.3.0",
           "System.Threading.Tasks": "4.3.0"
+        }
+      },
+      "System.Net.WebHeaderCollection/4.0.1": {
+        "dependencies": {
+          "System.Collections": "4.3.0",
+          "System.Resources.ResourceManager": "4.3.0",
+          "System.Runtime": "4.3.0",
+          "System.Runtime.Extensions": "4.3.0"
         }
       },
       "System.Numerics.Vectors/4.4.0": {},
@@ -4042,6 +4177,48 @@
       "type": "project",
       "serviceable": false,
       "sha512": ""
+    },
+    "Amazon.Core/0.3.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-yuKl7W9W1P9u06DbwO+KUS4dKIs2y75gcMgDgAtCecoLHQrjSDNJEv+leyM5lHYp6cQJsW2yrDVb9QjP2n/Zfw==",
+      "path": "amazon.core/0.3.2",
+      "hashPath": "amazon.core.0.3.2.nupkg.sha512"
+    },
+    "Amazon.S3/4.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-Gs3w6qMDIXWUf7Yw4xuCioiKcpeyq2orx+U01DNUcKdeTWK1iQ78C83AofebHkOWz9BEwdz49pr320uNApbzSw==",
+      "path": "amazon.s3/4.0.0",
+      "hashPath": "amazon.s3.4.0.0.nupkg.sha512"
+    },
+    "AWSSDK.Core/3.3.21.19": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-L/YinKIMBI4gI1TAC1Jy9QcIMxu1WHP4OM1yaCZqzbDDKh3WgsY21G76ohgS3Xd0nvSamcJElAAUBukwUvTaVA==",
+      "path": "awssdk.core/3.3.21.19",
+      "hashPath": "awssdk.core.3.3.21.19.nupkg.sha512"
+    },
+    "AWSSDK.S3/3.3.18": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-01mpkND9RDSWJ2UagYf2I8V85npBMAUmclq3j1CbpWLYhBgtyF4zrYEJL7gSUyARae+T+h1K6kgespmE7p02ow==",
+      "path": "awssdk.s3/3.3.18",
+      "hashPath": "awssdk.s3.3.3.18.nupkg.sha512"
+    },
+    "Carbon.Json/1.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-eqwwBxkGvVPT+2Li2kSjPSff9kdK1IwGfOTsVOP8F/RHOkqfU4l5rbjikx2OL3JUw5oOS4z5zwGUxCwl7ldEtQ==",
+      "path": "carbon.json/1.0.0",
+      "hashPath": "carbon.json.1.0.0.nupkg.sha512"
+    },
+    "Carbon.Storage/1.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-mh2KoffqA6uxykM2BW+bZAE3phQRos0GIb/LeZvnlG7Q2KuDY420V0gTlbAPkRa2T2oI0op8bfib0jyeLpg3Mw==",
+      "path": "carbon.storage/1.0.0",
+      "hashPath": "carbon.storage.1.0.0.nupkg.sha512"
     },
     "Libuv/1.10.0": {
       "type": "package",
@@ -5667,6 +5844,13 @@
       "path": "system.net.primitives/4.3.0",
       "hashPath": "system.net.primitives.4.3.0.nupkg.sha512"
     },
+    "System.Net.Requests/4.0.11": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-vY0eSoeAOc03wzT3Qti9UyznEbHrNUgwgeG/NZEIuA0nNZHKoEcsYI7g8JutQZOhUcVUNCxy4LSdizqbKcYRqg==",
+      "path": "system.net.requests/4.0.11",
+      "hashPath": "system.net.requests.4.0.11.nupkg.sha512"
+    },
     "System.Net.Security/4.3.0": {
       "type": "package",
       "serviceable": true,
@@ -5680,6 +5864,13 @@
       "sha512": "sha512-6Wba6TfkjIYbVCbtABVX4R/DqUAUePc4zF/UvGLxAExRqyUzG0eyt1sDHH2F4fijifs5Mpp+8xqbvAzpvSKrNA==",
       "path": "system.net.sockets/4.3.0",
       "hashPath": "system.net.sockets.4.3.0.nupkg.sha512"
+    },
+    "System.Net.WebHeaderCollection/4.0.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-uYTsz2gLzsjQhNGGJe0Zme+HrWt6BsM2WTHECm5EcvVkN/OWoMDO+2sFoS6xHGpTQaNz/WN69wi3SkfNol4efQ==",
+      "path": "system.net.webheadercollection/4.0.1",
+      "hashPath": "system.net.webheadercollection.4.0.1.nupkg.sha512"
     },
     "System.Numerics.Vectors/4.4.0": {
       "type": "package",

@@ -26,6 +26,7 @@ namespace PodcastSiteBuilder.Controllers
         //need to add navigation - probably change podcast episodes display to its own route, not index?
         {
             // List<RssData> rssFeedData = GetRss();
+            if(_context.Podcasts.FirstOrDefault() == null) return View("NoFeed"); //if no podcast feed is set, admin needs to add one
             List<RssData> rssFeedData = GetEpisodes(5);
             ViewBag.PodcastTitle = _context.Podcasts.FirstOrDefault().Title;
             return View(rssFeedData);
@@ -79,6 +80,7 @@ namespace PodcastSiteBuilder.Controllers
         public IActionResult Hosts()
         {
             List<HostDisplay> HostDisplays = new List<HostDisplay>();
+            if(_context.Hosts.FirstOrDefault() == null) return View("NoHosts");
             foreach(Host h in _context.Hosts)
             {
                 HostDisplay newHost = new HostDisplay()
@@ -96,6 +98,7 @@ namespace PodcastSiteBuilder.Controllers
         [Route("episodes")]
         public IActionResult Episodes(int page = 1)
         {
+            if(_context.Podcasts.FirstOrDefault() == null) return RedirectToAction("Index");
             int offset = 10 * (page-1);
             List<RssData> episodes = GetEpisodes(10, offset);
             ViewBag.page = page;
