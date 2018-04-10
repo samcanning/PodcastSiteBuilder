@@ -23,5 +23,6 @@ audio
 .hostPanel
 {
     display: inline-block;
+    vertical-align: top;
     margin: 0px 15px;
 }

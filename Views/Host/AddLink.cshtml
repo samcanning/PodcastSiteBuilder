@@ -3,7 +3,7 @@
     ViewData["Title"] = "Add link to " + @ViewBag.name;
 }
 <h3>Add link to @ViewBag.name</h3>
-<form asp-action="CreateLink" asp-controller="Admin" method="POST">
+<form asp-action="CreateLink" asp-controller="Host" method="POST">
     <input hidden value="@ViewBag.id" name="id">
     URL: <input type="text" name="url"> <span asp-validation-for="url"></span><br><br>
     Title: <input type="text" name="site"> <span asp-validation-for="site"></span><br><br>

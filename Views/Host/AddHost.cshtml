@@ -3,7 +3,7 @@
     ViewData["Title"] = "Add host";
 }
 <h3>Add host</h3>
-<form asp-action="CreateHost" asp-controller="Admin" enctype="multipart/form-data" method="POST">
+<form asp-action="CreateHost" asp-controller="Host" enctype="multipart/form-data" method="POST">
     Name: <input asp-for="name"> <span asp-validation-for="name"></span><br><br>
     Bio: <input asp-for="bio"><br><br>
     Display image (optional) <input type="file" name="file"><br>

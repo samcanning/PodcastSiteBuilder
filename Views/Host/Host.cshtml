@@ -26,7 +26,7 @@
     <img src="@img" width="250"><br><br>
 }
 <p><a href="@Model.id/removeimage">Remove image</a></p>
-<form asp-action="AddImage" asp-controller="Admin" enctype="multipart/form-data" method="POST">
+<form asp-action="AddImage" asp-controller="Host" enctype="multipart/form-data" method="POST">
     <input hidden name="id" value="@Model.id">
     <input type="file" name="file"><br>
     <input type='submit' value="Upload">
