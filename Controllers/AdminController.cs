@@ -64,6 +64,7 @@ namespace PodcastSiteBuilder.Controllers
                 {
                     HttpContext.Session.SetString("admin", "true");
                     if(thisAdmin.Head == 1) HttpContext.Session.SetString("head", "true");
+                    HttpContext.Session.SetString("username", thisAdmin.Username);
                     return RedirectToAction("Admin");
                 }
                 ModelState.AddModelError("Password", "Incorrect password.");
@@ -98,6 +99,7 @@ namespace PodcastSiteBuilder.Controllers
                 _context.Add(newAdmin);
                 _context.SaveChanges();
                 HttpContext.Session.SetString("head", "true");
+                HttpContext.Session.SetString("username", newAdmin.Username);
                 return RedirectToAction("Admin");
             }
             return View("AdminRegistration");
@@ -180,6 +182,24 @@ namespace PodcastSiteBuilder.Controllers
             return true;     
         }
 
+        [Route("admin/description")]
+        public IActionResult Description()
+        {
+            if(NotLogged()) return RedirectToAction("AdminLogin");
+            ViewBag.desc = _context.Podcasts.FirstOrDefault().Description;
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult UpdateDescription(string description)
+        {
+            Podcast podcast = _context.Podcasts.FirstOrDefault();
+            podcast.Description = description;
+            _context.Update(podcast);
+            _context.SaveChanges();
+            return RedirectToAction("Description");
+        }
+
         [Route("admin/add")]
         public IActionResult AddAdmin()
         {
@@ -235,6 +255,33 @@ namespace PodcastSiteBuilder.Controllers
         {
             if(NotLogged() || NotHead()) return RedirectToAction("AdminLogin");
             return View(_context.Admins.ToList());
+        }
+
+        [Route("admin/changepassword")]
+        public IActionResult ChangePassword()
+        {
+            if(NotLogged()) return RedirectToAction("AdminLogin");
+            return View();
+        }
+
+        [HttpPost]
+        [Route("admin/changepassword/submit")]
+        public IActionResult SubmitPWChange(NewPassword model)
+        {
+            if(NotLogged()) return RedirectToAction("AdminLogin");
+            if(!ModelState.IsValid) return View("ChangePassword", model);
+            Admin thisAdmin = _context.Admins.SingleOrDefault(a => a.Username == HttpContext.Session.GetString("username"));
+            if(thisAdmin == null) return RedirectToAction("Logout");
+            PasswordHasher<Admin> hasher = new PasswordHasher<Admin>();
+            if(hasher.VerifyHashedPassword(thisAdmin, thisAdmin.Password, model.oldpw) == 0)
+            {
+                ModelState.AddModelError("oldpw", "Incorrect password.");
+                return View("ChangePassword", model);
+            }
+            thisAdmin.Password = hasher.HashPassword(thisAdmin, model.newpw);
+            _context.Update(thisAdmin);
+            _context.SaveChanges();
+            return RedirectToAction("Admin");
         }
 
         public bool NotLogged()

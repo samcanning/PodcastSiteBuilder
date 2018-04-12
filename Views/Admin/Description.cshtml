@@ -1,0 +1,18 @@
+@{
+    ViewData["Title"] = "Edit Description";
+}
+<h2>Edit podcast description</h2>
+@if(ViewBag.desc == null)
+{
+    <p>No description has been set for this podcast.</p>
+}
+else
+{
+    <p>Current description:</p>
+    <p>@ViewBag.desc</p>
+}
+<form asp-action="UpdateDescription" asp-controller="Admin" method="POST">
+    <textarea name="description"></textarea><br>
+    <input type="submit">
+</form><br>
+<p><a href="/admin">Back</a></p>

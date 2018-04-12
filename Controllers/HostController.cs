@@ -92,6 +92,13 @@ namespace PodcastSiteBuilder.Controllers
         {
             TransferUtility transfer = new TransferUtility(Credentials.AccessKey, Credentials.SecretKey, Amazon.RegionEndpoint.USWest2);
             Host thisHost = _context.Hosts.SingleOrDefault(h => h.id == id);
+            if(thisHost.image != null)
+            {
+                using(Amazon.S3.AmazonS3Client client = new Amazon.S3.AmazonS3Client(Credentials.AccessKey, Credentials.SecretKey, Amazon.RegionEndpoint.USWest2))
+                {
+                    client.DeleteObjectAsync("dhcimages", thisHost.image);
+                }                
+            }
             using(var stream = new MemoryStream())
             {
                 string key = null;
@@ -255,13 +262,13 @@ namespace PodcastSiteBuilder.Controllers
             if(NotLogged()) return RedirectToAction("AdminLogin", "Admin");
             Host thisHost = _context.Hosts.SingleOrDefault(h => h.id == id);
             if(thisHost == null) return RedirectToAction("Admin", "Admin");
+            Amazon.S3.AmazonS3Client client = new Amazon.S3.AmazonS3Client(Credentials.AccessKey, Credentials.SecretKey, Amazon.RegionEndpoint.USWest2);
+            client.DeleteObjectAsync("dhcimages", thisHost.image);
             thisHost.image = null;
             _context.Update(thisHost);
             _context.SaveChanges();
             return RedirectToAction("Host", new {id = id});
         }
-
-        //need AddHost function!!
 
         public bool NotLogged()
         {

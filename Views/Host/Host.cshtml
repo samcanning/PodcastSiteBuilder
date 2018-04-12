@@ -24,8 +24,8 @@
 {
     string img = "https://s3-us-west-2.amazonaws.com/dhcimages/" + @Model.image; 
     <img src="@img" width="250"><br><br>
+    <p><a href="@Model.id/removeimage">Remove image</a></p>
 }
-<p><a href="@Model.id/removeimage">Remove image</a></p>
 <form asp-action="AddImage" asp-controller="Host" enctype="multipart/form-data" method="POST">
     <input hidden name="id" value="@Model.id">
     <input type="file" name="file"><br>
