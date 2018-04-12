@@ -1,0 +1,12 @@
+@model PodcastSiteBuilder.Models.AdminRegister
+@{
+    ViewData["Title"] = "Add Admin";
+}
+<h2>Add Admin</h2>
+<form asp-action="CreateAdmin" asp-controller="Admin" method="POST">
+    Username: <input asp-for="Username"> <span asp-validation-for="Username"></span><br><br>
+    Password: <input asp-for="Password"> <span asp-validation-for="Password"></span><br><br>
+    Confirm password: <input asp-for="PasswordConfirm"> <span asp-validation-for="PasswordConfirm"></span><br><br>
+    <input type="submit"><br><br>
+</form>
+<p><a href="/admin">Back</a></p>

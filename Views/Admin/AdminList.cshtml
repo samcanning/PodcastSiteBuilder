@@ -1,0 +1,10 @@
+@model List<PodcastSiteBuilder.Models.Admin>
+@{
+    ViewData["Title"] = "Admin List";
+}
+<h2>Admins</h2>
+@foreach(var x in Model)
+{
+    <p>@x.Username</p>
+}
+<p><a href="/admin">Back</a></p>

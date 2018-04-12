@@ -29,11 +29,9 @@ namespace PodcastSiteBuilder.Controllers
         public IActionResult Admin()
         {
             if(NotLogged()) return RedirectToAction("AdminLogin");
-            if(HttpContext.Session.GetString("user") == "default")
-            {
-                return RedirectToAction("AdminRegistration");
-            }
-            else ViewBag.Head = true;
+            if(HttpContext.Session.GetString("head") == "true") ViewBag.Head = true;
+            else ViewBag.Head = false;
+            if(_context.Admins.Count() > 1) ViewBag.toDelete = true;
             return View();
         }
 
@@ -52,9 +50,9 @@ namespace PodcastSiteBuilder.Controllers
         [Route("admin/login")]
         public IActionResult Login(AdminLogin model)
         {
+            Admin thisAdmin = _context.Admins.SingleOrDefault(a => a.Username == model.Username);
             if(ModelState.IsValid)
-            {
-                Admin thisAdmin = _context.Admins.SingleOrDefault(a => a.Username == model.Username);
+            {                
                 if(thisAdmin == null)
                 {
                     ModelState.AddModelError("Username", "No admin found with this username.");
@@ -65,7 +63,7 @@ namespace PodcastSiteBuilder.Controllers
                 if(hasher.VerifyHashedPassword(thisAdmin, thisAdmin.Password, model.Password) != 0)
                 {
                     HttpContext.Session.SetString("admin", "true");
-                    HttpContext.Session.SetString("user", thisAdmin.Username);
+                    if(thisAdmin.Head == 1) HttpContext.Session.SetString("head", "true");
                     return RedirectToAction("Admin");
                 }
                 ModelState.AddModelError("Password", "Incorrect password.");
@@ -81,35 +79,26 @@ namespace PodcastSiteBuilder.Controllers
         }
 
         [HttpPost]
-        [Route("admin/register/error")]
+        [Route("admin/register/submit")]
         public IActionResult Register(AdminRegister model)
         {
             if(ModelState.IsValid)
             {
                 if(model.Username == "default")
                 {
-                    ModelState.AddModelError("Username", "Username cannot be \"Default\".");
+                    ModelState.AddModelError("Username", "Username cannot be \"default\".");
                     return View("AdminRegistration");
                 }
                 PasswordHasher<Admin> hasher = new PasswordHasher<Admin>();
-                if(HttpContext.Session.GetString("user") == "default")
-                {
-                    Admin newAdmin = _context.Admins.SingleOrDefault(a => a.Username == "default");
-                    newAdmin.Username = model.Username;
-                    newAdmin.Password = hasher.HashPassword(newAdmin, model.Password);
-                    _context.Update(newAdmin);
-                    _context.SaveChanges();
-                    HttpContext.Session.SetString("user", newAdmin.Username);
-                    return RedirectToAction("Admin");
-                }
-                else
-                {
-                    Admin newAdmin = new Admin(){Username = model.Username};
-                    newAdmin.Password = hasher.HashPassword(newAdmin, model.Password);
-                    _context.Add(newAdmin);
-                    _context.SaveChanges();
-                    return RedirectToAction("Admin");
-                }
+                Admin newAdmin = new Admin(){
+                    Username = model.Username,
+                    Head = 1
+                    };
+                newAdmin.Password = hasher.HashPassword(newAdmin, model.Password);
+                _context.Add(newAdmin);
+                _context.SaveChanges();
+                HttpContext.Session.SetString("head", "true");
+                return RedirectToAction("Admin");
             }
             return View("AdminRegistration");
         }
@@ -191,10 +180,80 @@ namespace PodcastSiteBuilder.Controllers
             return true;     
         }
 
+        [Route("admin/add")]
+        public IActionResult AddAdmin()
+        {
+            if(NotLogged() || NotHead()) return RedirectToAction("AdminLogin");
+            return View();
+        }
+
+        [HttpPost]
+        [Route("admin/add/submit")]
+        public IActionResult CreateAdmin(AdminRegister model)
+        {
+            if(NotLogged() || NotHead()) return RedirectToAction("AdminLogin");
+            Admin existingAdmin = _context.Admins.SingleOrDefault(a => a.Username == model.Username);
+            if(existingAdmin != null) ModelState.AddModelError("Username", "This username is already in use.");
+            if(!ModelState.IsValid) return View("AddAdmin");
+            PasswordHasher<Admin> hasher = new PasswordHasher<Admin>();
+            Admin newAdmin = new Admin(){Username = model.Username};
+            newAdmin.Password = hasher.HashPassword(newAdmin, model.Password);
+            _context.Add(newAdmin);
+            _context.SaveChanges();
+            return RedirectToAction("AdminList");
+        }
+
+        [Route("admin/delete")]
+        public IActionResult DeleteAdmin()
+        {
+            if(NotLogged() || NotHead()) return RedirectToAction("AdminLogin");
+            List<Admin> admins = _context.Admins.Where(u => u.Head != 1).ToList();
+            if(admins.Count == 0) return RedirectToAction("Admin");
+            return View(admins);
+        }
+
+        [HttpPost]
+        [Route("admin/delete/submit")]
+        public IActionResult SubmitDeleteAdmin(string password, int toDelete)
+        {
+            if(NotLogged() || NotHead()) return RedirectToAction("AdminLogin");
+            Admin thisAdmin = _context.Admins.SingleOrDefault(a => a.Head == 1);
+            if(thisAdmin == null) return RedirectToAction("AdminLogin");
+            List<Admin> admins = _context.Admins.Where(u => u.Head != 1).ToList();
+            if(password == null) return View("DeleteAdmin", admins);
+            PasswordHasher<Admin> hasher = new PasswordHasher<Admin>();
+            if(hasher.VerifyHashedPassword(thisAdmin, thisAdmin.Password, password) == 0) return View("DeleteAdmin", admins);
+            Admin adminToDelete = _context.Admins.SingleOrDefault(a => a.id == toDelete);
+            if(adminToDelete == null) return RedirectToAction("DeleteAdmin", admins);
+            _context.Remove(adminToDelete);
+            _context.SaveChanges();
+            return RedirectToAction("AdminList");
+        }
+
+        [Route("admin/list")]
+        public IActionResult AdminList()
+        {
+            if(NotLogged() || NotHead()) return RedirectToAction("AdminLogin");
+            return View(_context.Admins.ToList());
+        }
+
         public bool NotLogged()
         {
             if(HttpContext.Session.GetString("admin") == "true") return false;
             return true;
+        }
+
+        public bool NotHead()
+        {
+            if(HttpContext.Session.GetString("head") == "true") return false;
+            return true;
+        }
+
+        [Route("logout")]
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Clear();
+            return RedirectToAction("Admin");
         }
 
     }

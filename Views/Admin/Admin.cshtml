@@ -1,7 +1,6 @@
 @{
     ViewData["Title"] = "Admin";
 }
-<h2>Welcome!</h2>
 <h2>Admin actions:</h2>
 <h3>RSS</h3>
 <p><a href='rss'>Edit RSS feeds</a></p>
@@ -9,8 +8,15 @@
 <p><a href='hosts/edit'>Edit hosts</a></p>
 <p><a href="hosts/add">Add host</a></p>
 <p><a href="hosts/delete">Delete host</a></p>
-<p>Edit links</p>
 <h3>Admin</h3>
-<p>Add admin</p>
-<p>Delete admin</p>
+@if(ViewBag.Head == true)
+{
+    <p><a href="add">Add admin</a></p>
+    if(ViewBag.toDelete == true)
+    {
+        <p><a href="delete">Delete admin</a></p>
+    }
+    <p><a href="list">View all admins</a></p>
+}
 <p>Change your password</p>
+<p><a href="/logout">Log out</a></p>

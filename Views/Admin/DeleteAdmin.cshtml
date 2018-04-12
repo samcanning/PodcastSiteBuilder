@@ -1,0 +1,17 @@
+@model List<PodcastSiteBuilder.Models.Admin>
+@{
+    ViewData["Title"] = "Delete Admin";
+}
+<h2>Delete Admin</h2>
+<form asp-action="SubmitDeleteAdmin" asp-controller="Admin" method="POST">
+    Admin to delete: 
+    <select name="toDelete">
+        @foreach(var x in Model)
+        {
+            <option value="@x.id">@x.Username</option>
+        }
+    </select><br><br>
+    Confirm password: <input type="password" name="password">
+    <input type="submit"><br><br>
+</form>
+<p><a href="/admin">Back</a></p>
