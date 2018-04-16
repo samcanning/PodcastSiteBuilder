@@ -117,14 +117,48 @@ namespace PodcastSiteBuilder.Controllers
             return nodes.Count;
         }
 
-        /* pulls title from RSS feed - probably no longer needed now that DB contains title
-        public string GetTitle()
+        [Route("about")]
+        public IActionResult About() //feed podcast links into view
         {
-            XmlDocument doc = new XmlDocument();
-            doc.Load("http://feeds.feedburner.com/mbmbam?format=xml"); //using MBMBAM as a temporary RSS feed - will later allow admin to select RSS feed
-            XmlElement root = doc.DocumentElement;
-            return root.SelectSingleNode("channel/title").InnerText;
+            if(_context.Podcasts.Count() == 0) return View("NoFeed");
+            return View(_context.Podcasts.FirstOrDefault());
         }
+
+        /*
+        DO NOT FORGET TO DELETE CLEARDB!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        DO NOT FORGET TO DELETE CLEARDB!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        DO NOT FORGET TO DELETE CLEARDB!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        DO NOT FORGET TO DELETE CLEARDB!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        DO NOT FORGET TO DELETE CLEARDB!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        DO NOT FORGET TO DELETE CLEARDB!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         */
+
+        [Route("cleardb")] //FOR DEBUGGING!!! REMEMBER TO DELETE!!!!
+        public IActionResult ClearDB()
+        {
+            List<Admin> admins = _context.Admins.ToList();
+            List<Host> hosts = _context.Hosts.ToList();
+            List<Podcast> podcasts = _context.Podcasts.ToList();
+            List<Link> links = _context.Links.ToList();
+            foreach(var x in links)
+            {
+                _context.Remove(x);
+            }
+            _context.SaveChanges();
+            foreach(var x in admins)
+            {
+                _context.Remove(x);
+            }
+            foreach(var x in hosts)
+            {
+                _context.Remove(x);
+            }
+            foreach(var x in podcasts)
+            {
+                _context.Remove(x);
+            }            
+            _context.SaveChanges();
+            return Json(new {clear = true});
+        }
     }
 }

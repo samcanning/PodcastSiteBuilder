@@ -1,0 +1,11 @@
+@model PodcastSiteBuilder.Models.PodcastLink
+@{
+    ViewData["Title"] = "Add link";
+}
+<h3>Add link to podcast</h3>
+<form asp-action="CreateLink" asp-controller="Admin" method="POST">
+    URL: <input type="text" name="url"> <span asp-validation-for="url"></span><br><br>
+    Title: <input type="text" name="title"> <span asp-validation-for="title"></span><br><br>
+    <input type="submit"><br><br>
+</form>
+<p><a href="/admin/links">Back</a></p>

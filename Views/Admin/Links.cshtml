@@ -1,0 +1,15 @@
+@model List<PodcastSiteBuilder.Models.PodcastLink>
+@{
+    ViewData["Title"] = "Edit links";
+}
+<h2>Edit Links</h2>
+@if(Model.Count == 0)
+{
+    <p>This podcast has no links.</p>
+}
+@foreach(var x in Model)
+{
+    <p>@x.title - <a href="@x.url">@x.url</a> (<a href='/admin/links/edit/@x.id'>Edit</a> | <a href='/admin/links/remove/@x.id'>Remove</a>)</p>
+}
+<p><a href='links/add'>Add link</a></p>
+<p><a href='/admin'>Back</a></p>

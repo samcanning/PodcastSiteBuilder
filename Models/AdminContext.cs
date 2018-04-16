@@ -9,5 +9,6 @@ namespace PodcastSiteBuilder.Models
         public DbSet<Podcast> Podcasts {get;set;}
         public DbSet<Host> Hosts {get;set;}
         public DbSet<Link> Links {get;set;}
+        public DbSet<PodcastLink> PodcastLinks {get;set;}
     }
 }

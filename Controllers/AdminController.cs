@@ -31,6 +31,7 @@ namespace PodcastSiteBuilder.Controllers
             if(NotLogged()) return RedirectToAction("AdminLogin");
             if(HttpContext.Session.GetString("head") == "true") ViewBag.Head = true;
             else ViewBag.Head = false;
+            if(_context.Hosts.Count() != 0) ViewBag.editHosts = true;
             if(_context.Admins.Count() > 1) ViewBag.toDelete = true;
             return View();
         }
@@ -98,6 +99,7 @@ namespace PodcastSiteBuilder.Controllers
                 newAdmin.Password = hasher.HashPassword(newAdmin, model.Password);
                 _context.Add(newAdmin);
                 _context.SaveChanges();
+                HttpContext.Session.SetString("admin", "true");
                 HttpContext.Session.SetString("head", "true");
                 HttpContext.Session.SetString("username", newAdmin.Username);
                 return RedirectToAction("Admin");
@@ -283,6 +285,52 @@ namespace PodcastSiteBuilder.Controllers
             _context.SaveChanges();
             return RedirectToAction("Admin");
         }
+
+        [Route("admin/links")]
+        public IActionResult Links()
+        {
+            // if(NotLogged()) return RedirectToAction("AdminLogin");
+            return View(_context.PodcastLinks.ToList());
+        }
+
+        [Route("admin/links/add")]
+        public IActionResult AddLink()
+        {
+            if(NotLogged()) return RedirectToAction("AdminLogin");
+            return View();
+        }
+
+        [HttpPost]
+        [Route("admin/links/add/submit")]
+        public IActionResult CreateLink(PodcastLink model)
+        {
+            if(NotLogged()) return RedirectToAction("AdminLogin");
+            if(model.url == null) ModelState.AddModelError("url", "Must enter a URL.");
+            if(model.title == null) ModelState.AddModelError("title", "Must enter a title for your link.");
+            if(!ModelState.IsValid) return View("AddLink");
+            try
+            {
+                if(model.url.Substring(0, 7) != "http://" && model.url.Substring(0, 8) != "https://") model.url = "http://" + model.url;
+            } catch{ model.url = "http://" + model.url; } 
+            PodcastLink newLink = new PodcastLink(){
+                url = model.url,
+                title = model.title
+            };
+            _context.Add(newLink);
+            _context.SaveChanges();
+            return RedirectToAction("Links");
+        }
+
+        [Route("admin/links/edit/{id}")]
+        public IActionResult EditLink(int id)
+        {
+            // if(NotLogged()) return RedirectToAction("AdminLogin");
+            PodcastLink link = _context.PodcastLinks.SingleOrDefault(l => l.id == id);
+            if(link == null) return RedirectToAction("Links");
+            return View(link);
+        }
+
+        //NEED EDIT AND REMOVE LINKS
 
         public bool NotLogged()
         {

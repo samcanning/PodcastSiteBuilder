@@ -5,8 +5,12 @@
 <h3>Podcast</h3>
 <p><a href='rss'>Edit RSS feeds</a></p>
 <p><a href="description">Edit description</a></p>
+<p><a href="links">Edit links</a></p>
 <h3>Hosts</h3>
-<p><a href='hosts/edit'>Edit hosts</a></p>
+@if(ViewBag.editHosts == true)
+{
+    <p><a href='hosts/edit'>Edit hosts</a></p>
+}
 <p><a href="hosts/add">Add host</a></p>
 <p><a href="hosts/delete">Delete host</a></p>
 <h3>Admin</h3>

@@ -190,6 +190,10 @@ namespace PodcastSiteBuilder.Controllers
             if(url == null) ModelState.AddModelError("url", "Must enter a URL.");
             if(site == null) ModelState.AddModelError("site", "Must enter a title for your link.");
             if(!ModelState.IsValid) return View("AddLink");
+            try
+            {
+                if(url.Substring(0, 7) != "http://" && url.Substring(0, 8) != "https://") url = "http://" + url;
+            } catch{ url = "http://" + url; } 
             Link newLink = new Link(){
                 url = url,
                 site = site,
