@@ -110,7 +110,7 @@ namespace PodcastSiteBuilder.Controllers
         [Route("admin/rss")]
         public IActionResult EditRSS()
         {
-            if(NotLogged()) return RedirectToAction("AdminLogin");
+            if(NotLogged() || NotHead()) return RedirectToAction("AdminLogin");
             Podcast podcast = _context.Podcasts.FirstOrDefault();
             if(podcast != null) ViewBag.Feed = podcast.Feed;
             else ViewBag.Feed = null;
@@ -289,7 +289,7 @@ namespace PodcastSiteBuilder.Controllers
         [Route("admin/links")]
         public IActionResult Links()
         {
-            // if(NotLogged()) return RedirectToAction("AdminLogin");
+            if(NotLogged()) return RedirectToAction("AdminLogin");
             return View(_context.PodcastLinks.ToList());
         }
 
@@ -324,13 +324,62 @@ namespace PodcastSiteBuilder.Controllers
         [Route("admin/links/edit/{id}")]
         public IActionResult EditLink(int id)
         {
-            // if(NotLogged()) return RedirectToAction("AdminLogin");
+            if(NotLogged()) return RedirectToAction("AdminLogin");
             PodcastLink link = _context.PodcastLinks.SingleOrDefault(l => l.id == id);
             if(link == null) return RedirectToAction("Links");
             return View(link);
         }
 
-        //NEED EDIT AND REMOVE LINKS
+        [HttpPost]
+        [Route("admin/links/edit/{id}/submit_title")]
+        public IActionResult EditLinkTitle(int id, string title)
+        {
+            if(NotLogged()) return RedirectToAction("AdminLogin");
+            PodcastLink thisLink = _context.PodcastLinks.SingleOrDefault(l => l.id == id);
+            if(thisLink == null) return RedirectToAction("Links");
+            if(title == null)
+            {
+                ModelState.AddModelError("title", "Title cannot be empty.");
+                return View("EditLink", thisLink);
+            }
+            thisLink.title = title;
+            _context.Update(thisLink);
+            _context.SaveChanges();
+            return RedirectToAction("Links");
+        }
+
+        [HttpPost]
+        [Route("admin/links/edit/{id}/submit_url")]
+        public IActionResult EditLinkURL(int id, string url)
+        {
+            if(NotLogged()) return RedirectToAction("AdminLogin");
+            PodcastLink thisLink = _context.PodcastLinks.SingleOrDefault(l => l.id == id);
+            if(thisLink == null) return RedirectToAction("Links");
+            if(url == null)
+            {
+                ModelState.AddModelError("url", "URL cannot be empty.");
+                return View("EditLink", thisLink);
+            }
+            try
+            {
+                if(url.Substring(0, 7) != "http://" && url.Substring(0, 8) != "https://") url = "http://" + url;
+            } catch{ url = "http://" + url; } 
+            thisLink.url = url;
+            _context.Update(thisLink);
+            _context.SaveChanges();
+            return RedirectToAction("Links");
+        }
+
+        [Route("admin/links/remove/{id}")]
+        public IActionResult RemoveLink(int id)
+        {
+            if(NotLogged()) return RedirectToAction("AdminLogin");
+            PodcastLink thisLink = _context.PodcastLinks.SingleOrDefault(l => l.id == id);
+            if(thisLink == null) return RedirectToAction("Links");
+            _context.Remove(thisLink);
+            _context.SaveChanges();
+            return RedirectToAction("Links");
+        }
 
         public bool NotLogged()
         {

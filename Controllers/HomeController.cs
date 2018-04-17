@@ -22,8 +22,7 @@ namespace PodcastSiteBuilder.Controllers
             _context = context;
         }
 
-        public IActionResult Index() //index page currently only displays list of all episodes with podcast title
-        //need to add navigation - probably change podcast episodes display to its own route, not index?
+        public IActionResult Index()
         {
             // List<RssData> rssFeedData = GetRss();
             if(_context.Podcasts.FirstOrDefault() == null) return View("NoFeed"); //if no podcast feed is set, admin needs to add one
@@ -47,10 +46,8 @@ namespace PodcastSiteBuilder.Controllers
                 {
                     episode.Title = nodes[i].SelectSingleNode("title").InnerText;
                     episode.Image = nodes[i].SelectSingleNode("./*[name()='itunes:image']/@href").InnerText;
-                    episode.Link = nodes[i].SelectSingleNode("link").InnerText; //may decide later to remove the Link property
+                    episode.Link = nodes[i].SelectSingleNode("link").InnerText;
                     episode.PubDate = nodes[i].SelectSingleNode("pubDate").InnerText.Substring(5, 11);
-                    //may decide later to reformat publish date string
-                    //currently just truncates from "Day, DD MMM YYYY HH:mm:SS +TTTT" to "DD MM YYYY"
                     episode.Audio = nodes[i].SelectSingleNode("enclosure/@url").InnerText;
                     episode.AudioType = nodes[i].SelectSingleNode("enclosure/@type").InnerText;
                     try
@@ -121,44 +118,11 @@ namespace PodcastSiteBuilder.Controllers
         public IActionResult About() //feed podcast links into view
         {
             if(_context.Podcasts.Count() == 0) return View("NoFeed");
-            return View(_context.Podcasts.FirstOrDefault());
+            Podcast thisPodcast = _context.Podcasts.FirstOrDefault();
+            ViewBag.Title = thisPodcast.Title;
+            ViewBag.Description = thisPodcast.Description;
+            return View(_context.PodcastLinks.ToList());
         }
 
-        /*
-        DO NOT FORGET TO DELETE CLEARDB!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        DO NOT FORGET TO DELETE CLEARDB!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        DO NOT FORGET TO DELETE CLEARDB!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        DO NOT FORGET TO DELETE CLEARDB!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        DO NOT FORGET TO DELETE CLEARDB!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        DO NOT FORGET TO DELETE CLEARDB!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        */
-
-        [Route("cleardb")] //FOR DEBUGGING!!! REMEMBER TO DELETE!!!!
-        public IActionResult ClearDB()
-        {
-            List<Admin> admins = _context.Admins.ToList();
-            List<Host> hosts = _context.Hosts.ToList();
-            List<Podcast> podcasts = _context.Podcasts.ToList();
-            List<Link> links = _context.Links.ToList();
-            foreach(var x in links)
-            {
-                _context.Remove(x);
-            }
-            _context.SaveChanges();
-            foreach(var x in admins)
-            {
-                _context.Remove(x);
-            }
-            foreach(var x in hosts)
-            {
-                _context.Remove(x);
-            }
-            foreach(var x in podcasts)
-            {
-                _context.Remove(x);
-            }            
-            _context.SaveChanges();
-            return Json(new {clear = true});
-        }
     }
 }

@@ -2,18 +2,15 @@
 @{
     ViewData["Title"] = "Edit link";
 }
-<!-- FIGURE OUT WHY NONE OF THIS WORKS -->
 <h3>Edit link for podcast</h3>
 <p>Title: @Model.title</p>
 <form asp-action="EditLinkTitle" asp-controller="Admin" method="POST">
-    <input hidden name="url" value="@Model.url">
-    <input hidden name="linkid" value="@Model.id">
+    <input hidden name="id" value="@Model.id">
     <input type="text" name="title"> <input type="submit"> <span asp-validation-for="title"></span>
 </form>
 <p>URL: @Model.url</p>
 <form asp-action="EditLinkURL" asp-controller="Admin" method="POST">
-    <input hidden name="title" value="@Model.title">
-    <input hidden name="linkid" value="@Model.id">
+    <input hidden name="id" value="@Model.id">
     <input type="text" name="url"> <input type="submit"> <span asp-validation-for="url"></span>
 </form>
 <p><a href="/admin/links">Back</a></p>

@@ -76,7 +76,12 @@ namespace PodcastSiteBuilder.Controllers
                 using(var stream = new MemoryStream())
                 {
                     string key = null;
-                    while(_context.Hosts.FirstOrDefault(h => h.image == key) != null) key = GenerateKey();
+                    if(_context.Hosts.Count() == 0) key = GenerateKey();
+                    else
+                    {
+                        key = GenerateKey();
+                        while(_context.Hosts.FirstOrDefault(h => h.image == key) != null) key = GenerateKey();
+                    }
                     file.CopyTo(stream);
                     transfer.Upload(stream, "dhcimages", key);
                     newHost.image = key;
@@ -232,6 +237,10 @@ namespace PodcastSiteBuilder.Controllers
                 thisLink.site = site;
                 return View("EditLink", thisLink);
             }
+            try
+            {
+                if(model.url.Substring(0, 7) != "http://" && model.url.Substring(0, 8) != "https://") model.url = "http://" + model.url;
+            } catch{ model.url = "http://" + model.url; } 
             thisLink.url = model.url;
             _context.Update(thisLink);
             _context.SaveChanges();

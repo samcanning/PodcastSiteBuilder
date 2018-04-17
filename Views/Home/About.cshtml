@@ -1,8 +1,10 @@
-@model PodcastSiteBuilder.Models.Podcast
+@model List<PodcastSiteBuilder.Models.PodcastLink>
 @{
     ViewData["Title"] = "About";
 }
-<h2>@Model.Title</h2>
-<p>@Model.Description</p>
-
-<!-- change model to podcast links, make title and description viewbag -->
+<h2>@ViewBag.Title</h2>
+<p>@ViewBag.Description</p>
+@foreach(var x in Model)
+{
+    <p><a href="@x.url">@x.title</a></p>
+}
